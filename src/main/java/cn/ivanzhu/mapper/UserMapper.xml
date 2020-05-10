@@ -1,0 +1,21 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.ivanzhu.mapper.UserMapper">
+
+    <insert id="insertUser" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO `user` VALUES (
+            null ,
+            #{name},
+            #{age},
+            #{phone},
+            #{sex},
+            null ,
+            null
+        )
+    </insert>
+
+    <update id="updateNameById">
+        UPDATE `user` SET `name` = #{name} WHERE id = #{id}
+    </update>
+
+</mapper>
