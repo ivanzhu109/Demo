@@ -65,4 +65,6 @@ public class UserController {
         userService.addUser(param);
         return "success";
     }
+
+
 }
