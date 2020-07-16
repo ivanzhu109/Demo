@@ -1,6 +1,8 @@
 package cn.ivanzhu.controller;
 
 import cn.ivanzhu.controller.param.UserSaveParam;
+import cn.ivanzhu.model.CustomerFinanceDetailDTO;
+import cn.ivanzhu.model.TestModel;
 import cn.ivanzhu.service.UserService;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -34,6 +37,9 @@ public class UserController {
 
     @Resource
     private RestTemplate restTemplate;
+
+//    @Resource
+//    private TestModel testModel;
 
     @GetMapping("/c0/json")
     public String jsonTest() {
@@ -64,6 +70,14 @@ public class UserController {
     public String addUser(@RequestBody UserSaveParam param){
         userService.addUser(param);
         return "success";
+    }
+
+    @GetMapping("/test")
+    public String exportExcel(){
+//        System.out.println(testModel);
+        Class<?> clazz = CustomerFinanceDetailDTO.builder().build().getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        return "成功";
     }
 
 

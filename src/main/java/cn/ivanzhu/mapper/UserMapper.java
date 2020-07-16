@@ -4,6 +4,9 @@ import cn.ivanzhu.model.UserPO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+/**
+ * @author ivanzhu
+ */
 @Mapper
 public interface UserMapper {
 
