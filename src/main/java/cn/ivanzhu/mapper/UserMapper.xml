@@ -18,4 +18,8 @@
         UPDATE `user` SET `name` = #{name} WHERE id = #{id}
     </update>
 
+    <select id="listAll" resultType="cn.ivanzhu.model.UserPO">
+        SELECT * FROM `user`
+    </select>
+
 </mapper>

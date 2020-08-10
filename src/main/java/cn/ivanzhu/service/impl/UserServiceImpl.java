@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author ivanzhu
@@ -30,15 +31,18 @@ public class UserServiceImpl implements UserService {
     public void addUser(UserSaveParam param) {
         UserPO userPO = param.getUserPO();
         int result = userMapper.insertUser(userPO);
-        if (result < 1){
+        if (result < 1) {
             throw new RuntimeException("插入用户信息失败");
         }
-        this.updateNameById(userPO.getId());
     }
 
-    private void updateNameById(Integer id) {
-        String name = "被修改过的名称";
-        userMapper.updateNameById(id, name);
-//        int i = 1/0;
+    /**
+     * 查询所有用户列表
+     *
+     * @return 用户列表
+     */
+    @Override
+    public List<UserPO> listAllUser() {
+        return userMapper.listAll();
     }
 }
