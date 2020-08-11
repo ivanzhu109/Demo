@@ -1,2 +1,4 @@
 /target/
 /.idea/
+/DemoCommonProject/target/
+/DemoFeignProject/target/
