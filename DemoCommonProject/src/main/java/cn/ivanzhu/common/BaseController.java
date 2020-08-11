@@ -32,7 +32,6 @@ public class BaseController {
         return BaseResult.builder()
                 .code(500)
                 .msg("服务器内部错误")
-//                .data(String.format("请求体：%s", httpServletRequest.getInputStream()))
                 .build();
     }
 }

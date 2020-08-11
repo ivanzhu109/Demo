@@ -4,6 +4,8 @@ import cn.ivanzhu.controller.param.UserSaveParam;
 import cn.ivanzhu.model.UserPO;
 import cn.ivanzhu.service.UserService;
 import com.alibaba.fastjson.JSON;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -26,6 +28,7 @@ import java.util.List;
  */
 @RequestMapping("/user")
 @RestController
+@PropertySource(value = "classpath:application.properties")
 public class UserController {
 
     @Resource
@@ -33,6 +36,12 @@ public class UserController {
 
     @Resource
     private RestTemplate restTemplate;
+
+    @Value("${test.user.name}")
+    private String name;
+
+    @Value("${test.user.age}")
+    private Integer age;
 
     @GetMapping("/http")
     public String httpMethod() throws Exception {
@@ -54,6 +63,11 @@ public class UserController {
     public String getUserList(){
         List<UserPO> users = userService.listAllUser();
         return JSON.toJSONString(users);
+    }
+
+    @GetMapping("/config")
+    public String getConfig(){
+        return "姓名：" + name + "， 年龄：" + age;
     }
 
 }
