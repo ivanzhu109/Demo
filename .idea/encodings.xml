@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/DemoCommonProject/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/DemoCommonProject/src/main/java/cn/ivanzhu/controller/UserController.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/DemoFeignProject/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DemoGatewayProject/src/main/java" charset="UTF-8" />
   </component>
 </project>

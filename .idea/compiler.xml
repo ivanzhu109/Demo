@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="DemoCommonProject" />
         <module name="DemoFeignProject" />
+        <module name="DemoGatewayProject" />
       </profile>
     </annotationProcessing>
   </component>
@@ -16,6 +17,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="DemoCommonProject" options="-parameters" />
       <module name="DemoFeignProject" options="-parameters" />
+      <module name="DemoGatewayProject" options="-parameters" />
       <module name="DemoProject" options="-parameters" />
     </option>
   </component>

@@ -6,7 +6,6 @@ import cn.ivanzhu.service.UserService;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -20,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -62,13 +60,13 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public String getUserList(){
+    public String getUserList() {
         List<UserPO> users = userService.listAllUser();
         return JSON.toJSONString(users);
     }
 
     @GetMapping("/config")
-    public String getConfig(){
+    public String getConfig() {
         return "姓名：" + name + "， 年龄：" + age;
     }
 
