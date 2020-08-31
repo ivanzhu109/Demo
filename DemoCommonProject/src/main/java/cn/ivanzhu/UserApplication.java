@@ -1,5 +1,6 @@
 package cn.ivanzhu;
 
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -16,6 +17,7 @@ import javax.annotation.Resource;
  */
 @SpringBootApplication(scanBasePackages = "cn.ivanzhu")
 @EnableDiscoveryClient
+@EnableRabbit
 public class UserApplication {
     @Resource
     private RestTemplateBuilder builder;

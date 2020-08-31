@@ -10,11 +10,13 @@
         <module name="DemoCommonProject" />
         <module name="DemoFeignProject" />
         <module name="DemoGatewayProject" />
+        <module name="DemoAmqpProject" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="DemoAmqpProject" options="-parameters" />
       <module name="DemoCommonProject" options="-parameters" />
       <module name="DemoFeignProject" options="-parameters" />
       <module name="DemoGatewayProject" options="-parameters" />

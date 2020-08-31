@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 83
 spring:
   datasource:
     username: root
@@ -11,15 +11,10 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
   application:
-    name: demo-common
+    name: demo-amqp
   rabbitmq:
-    addresses: 192.168.1.112:5672
     username: guest
     password: guest
-    publisher-confirms: true
-    publisher-returns: true
-    template:
-      mandatory: true
-mybatis:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    port: 5672
+    host: 192.168.1.112
+    virtual-host: /
