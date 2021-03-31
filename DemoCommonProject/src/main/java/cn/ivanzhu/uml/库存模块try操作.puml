@@ -1,0 +1,109 @@
+@startuml
+/'基础属性'/
+hide footbox
+'skinparam handwritten true
+skinparam roundcorner 10
+skinparam BoxPadding 20
+skinparam shadowing false
+skinparam defaultFontName Aapex
+skinparam defaultFontSize 12
+
+skinparam sequence {
+/'文本对齐'/
+MessageAlign center
+
+/'动作线属性'/
+ArrowColor DeepSkyBlue
+ArrowFontSize 14
+ArrowFontColor #4B2211
+
+/'角色线属性'/
+LifeLineBorderColor DeepSkyBlue
+LifeLineBackgroundColor #A9DCDF
+
+/'参与者属性'/
+ParticipantBorderColor DeepSkyBlue
+ParticipantBackgroundColor write
+ParticipantFontSize 16
+
+/'数据库标识属性'/
+DatabaseBackgroundColor Green
+DatabaseFontSize 16
+
+/'box属性'/
+BoxBorderColor DeepSkyBlue
+BoxBackgroundColor Write
+BoxFontColor Black
+
+/'角色信息属性'/
+ActorBorderColor DeepSkyBlue
+ActorFontColor Black
+ActorFontSize 16
+
+}
+
+/'角色信息'/
+actor "用户" as user
+participant "业务方" as business
+participant "库存服务" as inventory
+database "redis" as redis
+participant "mq" as mq
+database "mysql" as mysql
+
+/'逻辑信息'/
+autonumber
+activate user
+user -[#Green]> business: 操作业务
+
+alt try操作
+activate business
+business -[#Green]> inventory: 涉及到库存操作\ntry操作尝试操作库存
+activate inventory
+
+inventory -[#Green]> inventory: 构建redis指定key格式
+inventory -[#Green]> redis: 查询是否有指定的key
+activate redis
+alt key不存在时执行操作，\n此操作应加排它锁
+inventory -[#Green]> inventory: 若不存在对应key
+activate inventory
+inventory -[#Green]> mysql: 查询指定库存信息\n并计算try日志中的数量差
+activate mysql
+deactivate mysql
+note right of inventory: ps：若key不存在，\n则插入一条库存数为0的数据
+inventory -[#Green]> redis: 将key存入redis，记录库存值
+activate redis
+deactivate redis
+deactivate inventory
+end
+inventory -[#Green]> redis: 执行redis库存操作
+redis -[#Green]> redis: lua脚本原子性操作
+return 库存操作执行结果
+inventory -[#Green]> inventory: 操作成功\n执行插入日志
+activate inventory
+inventory -[#Green]> mysql: 生成唯一id，插入try操作日志，记录操作数量
+deactivate inventory
+return 返回操作结果\n携带try操作唯一id
+end
+
+business -[#Green]> business: try操作成功
+activate business
+business -[#Green]-> mq: 发送库存操作信息到mq\n携带try操作唯一id
+deactivate business
+activate mq
+business -[#Green]> user: success
+deactivate business
+autonumber stop
+
+/'库存消费消息操作'/
+alt 库存服务消费消息操作库存
+autonumber
+mq -[#Green]-> inventory: 拉取库存操作消息
+deactivate mq
+activate inventory
+inventory -[#Green]> inventory: 解析库存操作数据\n拿到try操作唯一id\n根据try操作id加排他锁
+inventory -[#Green]> mysql: 根据try操作id查询操作日志
+inventory -[#Green]>x inventory: 日志状态为 操作已完成
+inventory -[#Green]> mysql: 操作库存数据，生成出入库历史，修改try操作日志完成状态
+end
+
+@enduml
