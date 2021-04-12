@@ -4,11 +4,7 @@ import cn.ivanzhu.controller.param.UserSaveParam;
 import cn.ivanzhu.model.UserPO;
 import cn.ivanzhu.service.UserService;
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
-import com.sensorsdata.analytics.javasdk.SensorsAnalytics;
-import com.sensorsdata.analytics.javasdk.exceptions.InvalidArgumentException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,10 +27,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Base64;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -63,34 +58,35 @@ public class UserController {
     @GetMapping("/http")
     public String httpMethod() throws Exception {
         Map<String, Object> properties = Maps.newHashMapWithExpectedSize(3);
-        properties.put("created_number", 2);
+        properties.put("created_number", 1);
         properties.put("tenant_id", "24852d91-5c43-4f67-99c5-e6e441337749");
         properties.put("company_name", "新核云测试账号");
         SensorsEvent event = SensorsEvent.builder()
                 .distinct_id("24852d91-5c43-4f67-99c5-e6e441337749")
                 .time(System.currentTimeMillis())
                 .type("track")
-                .event("i_count_of_workorder_create")
+                .event("i_count_of_procurement_create")
                 .properties(properties)
                 .build();
 
         String base64 = Base64.getEncoder().encodeToString(JSON.toJSONString(event).getBytes());
         System.out.println(base64);
-        MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
-        paramMap.add("project", "default");
-        paramMap.add("token", "33c3c3e1cc577f3b");
+        MultiValueMap<String, String> urlMap = new LinkedMultiValueMap<>(2);
+        urlMap.add("project", "default");
+        urlMap.add("token", "33c3c3e1cc577f3b");
         UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl("https://xhy.datasink.sensorsdata.cn/sa").queryParams(paramMap);
-        ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put("gzip", 0);
+                UriComponentsBuilder.fromHttpUrl("https://xhy.datasink.sensorsdata.cn/sa").queryParams(urlMap);
+//        MultiValueMap<String, Object> paramMap = new LinkedMultiValueMap<>(2);
         String utf8 = URLEncoder.encode(base64, "UTF8");
         System.out.println(utf8);
-        objectNode.put("data", utf8);
-//        paramMap.add("gzip", "0");
-//        paramMap.add("data", base64);
+        urlMap.clear();
+        urlMap.add("gzip", "0");
+        urlMap.add("data", base64);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        HttpEntity<String> requestEntity = new HttpEntity<>(objectNode.toString(), headers);
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(urlMap, headers);
+//        ResponseEntity<String> responseEntity = restTemplate.postForEntity(builder.build().encode().toUri(), requestEntity, String.class);
+//        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity =
                 restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.POST, requestEntity, String.class);
         int statusCodeValue = responseEntity.getStatusCodeValue();
@@ -101,7 +97,7 @@ public class UserController {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SensorsEvent{
+    public static class SensorsEvent {
         private String distinct_id;
         private long time;
         private String type;
@@ -138,32 +134,24 @@ public class UserController {
 //                new SensorsAnalytics.DebugConsumer(SA_SERVER_URL, SA_WRITE_DATA));
 //        sa.track("24852d91-5c43-4f67-99c5-e6e441337749", true, "i_count_of_order_create");
 
-        SensorsEvent event = SensorsEvent.builder()
-                .distinct_id("24852d91-5c43-4f67-99c5-e6e441337749")
-                .time(System.currentTimeMillis())
-                .type("track")
-                .event("i_count_of_procurement_create")
-                .properties(Collections.emptyMap())
-                .build();
-
-        String base64 = Base64.getEncoder().encodeToString(JSON.toJSONString(event).getBytes());
-        System.out.println(base64);
-        String urlEncode = URLEncoder.encode(base64, "UTF8");
-        System.out.println(urlEncode);
-        System.out.println(URLEncoder.encode(urlEncode, "UTF8"));
+//        SensorsEvent event = SensorsEvent.builder()
+//                .distinct_id("24852d91-5c43-4f67-99c5-e6e441337749")
+//                .time(System.currentTimeMillis())
+//                .type("track")
+//                .event("i_count_of_procurement_create")
+//                .properties(Collections.emptyMap())
+//                .build();
+//
+//        String base64 = Base64.getEncoder().encodeToString(JSON.toJSONString(event).getBytes());
+//        System.out.println(base64);
+//        String urlEncode = URLEncoder.encode(base64, "UTF8");
+//        System.out.println(urlEncode);
+//        System.out.println(URLEncoder.encode(urlEncode, "UTF8"));
+        String utf8 = URLDecoder.decode("eyJkaXN0aW5jdF9pZCI6IjI0ODUyZDkxLTVjNDMtNGY2Ny05OWM1LWU2ZTQ0MTMzNzc0OSIsInRpbWUiOjE2MTcyNDg0MDA3MDcsInR5cGUiOiJ0cmFjayIsImV2ZW50IjoiaV9jb3VudF9vZl9vcmRlcl9jcmVhdGUiLCJwcm9wZXJ0aWVzIjp7ImNyZWF0ZWRfbnVtYmVyIjoxLCJ0ZW5hbnRfaWQiOiIyNDg1MmQ5MS01YzQzLTRmNjctOTljNS1lNmU0NDEzMzc3NDkiLCJjb21wYW55X25hbWUiOiLmlrDmoLjkupHmtYvor5UifX0%3D", "UTF8");
+        System.out.println(new String(Base64.getDecoder().decode(utf8.getBytes())));
+        String utf82 = URLDecoder.decode("eyJkaXN0aW5jdF9pZCI6IjI0ODUyZDkxLTVjNDMtNGY2Ny05OWM1LWU2ZTQ0MTMzNzc0OSIsImV2ZW50IjoiaV9jb3VudF9vZl9vcmRlcl9jcmVhdGUiLCJwcm9wZXJ0aWVzIjp7InRlbmFudF9pZCI6IjI0ODUyZDkxLTVjNDMtNGY2Ny05OWM1LWU2ZTQ0MTMzNzc0OSIsImNyZWF0ZWRfbnVtYmVyIjozLCJjb21wYW55X25hbWUiOiLmlrDmoLjkupHmtYvor5UifSwidGltZSI6MTYxNzI0ODM5NjM2NywidHlwZSI6InRyYWNrIn0%3D", "UTF8");
+        System.out.println(new String(Base64.getDecoder().decode(utf82.getBytes())));
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
