@@ -16,8 +16,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AspectAnnotation {
-    @AliasFor("editName")
+//    @AliasFor("editName")
     boolean editName() default false;
-    @AliasFor("editAge")
+//    @AliasFor("editAge")
     boolean editAge() default false;
 }
