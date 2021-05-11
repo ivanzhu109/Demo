@@ -1,0 +1,79 @@
+@startuml
+
+/'基础属性'/
+hide footbox
+'skinparam handwritten true
+skinparam roundcorner 10
+skinparam BoxPadding 20
+skinparam shadowing false
+skinparam defaultFontName Aapex
+skinparam defaultFontSize 12
+
+skinparam sequence {
+/'文本对齐'/
+MessageAlign center
+
+/'动作线属性'/
+ArrowColor DeepSkyBlue
+ArrowFontSize 14
+ArrowFontColor #4B2211
+
+/'角色线属性'/
+LifeLineBorderColor DeepSkyBlue
+LifeLineBackgroundColor #A9DCDF
+
+/'参与者属性'/
+ParticipantBorderColor DeepSkyBlue
+ParticipantBackgroundColor write
+ParticipantFontSize 16
+
+/'数据库标识属性'/
+DatabaseBackgroundColor Green
+DatabaseFontSize 16
+
+/'box属性'/
+BoxBorderColor DeepSkyBlue
+BoxBackgroundColor Write
+BoxFontColor Black
+
+/'角色信息属性'/
+ActorBorderColor DeepSkyBlue
+ActorFontColor Black
+ActorFontSize 16
+
+}
+
+alt 首页扫码
+    autonumber
+    actor "用户" as user
+    participant "app" as app #DADADA
+    participant "inventory" as inventory #DADADA
+    activate user
+    user -> app: 扫有效二维码
+    activate app
+    app -> inventory: 单据码请求按单列表
+    activate app
+    deactivate app
+    app -> inventory: 物料码请求按物料列表
+    activate app
+    deactivate app
+    inventory -> app: 返回对应的列表信息并且\n携带对应物料当前库存信息
+    return 页面渲染展示
+end
+
+alt 库存操作（含扫码）
+    autonumber
+    user <--> app: 手动分配库存或扫码分配
+    activate app
+    deactivate app
+    user -> app: 确认备料出库
+    activate app
+    app -> inventory: 发送备料出库请求
+    activate inventory
+    inventory -> inventory: 处理
+    inventory -> app: 返回 处理结果
+    deactivate inventory
+    app --> user: success
+    deactivate app
+end
+@enduml
